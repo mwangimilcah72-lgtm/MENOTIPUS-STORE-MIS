@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  User, 
-  Mail, 
+import {
+  Search,
+  Plus,
+  Edit2,
+  Trash2,
+  User,
+  Mail,
   Phone,
   Shield,
   CheckCircle,
   XCircle,
-  Upload, // Added Upload icon
+  Upload,
   AlertCircle,
-  Loader
+  Loader,
+  Lock
 } from 'lucide-react';
-import * as XLSX from 'xlsx'; // Import xlsx library for Excel handling
+import * as XLSX from 'xlsx';
+import { useSubscription } from '../contexts/SubscriptionContext';
 
 const Users = () => {
+  const { isPasswordLocked, getPlanForCompany } = useSubscription();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -187,8 +190,8 @@ const Users = () => {
           // Set default createdAt if not provided
           user.createdAt = new Date().toISOString().split('T')[0];
           
-          // Set default password
-          user.password = `${user.username}123`;
+          // Set default password — locked to 12345 on Free plan
+          user.password = isPasswordLocked ? '12345' : '12345';
           
           return user;
         }).filter(user => user !== null); // Remove invalid users
@@ -291,7 +294,9 @@ const Users = () => {
     const userData = {
       ...formData,
       createdAt: new Date().toISOString().split('T')[0],
-      password: showEditModal ? selectedUser.password : `${formData.username}123` // Default password for new users
+      password: showEditModal
+        ? (isPasswordLocked ? '12345' : selectedUser.password)
+        : '12345'
     };
 
     try {
@@ -625,15 +630,28 @@ const Users = () => {
                 </select>
               </div>
 
-              {!showEditModal && (
-                <div className="bg-blue-50 p-3 rounded-md">
-                  <p className="text-sm text-blue-800">
-                    Default password will be: <strong>{formData.username}123</strong>
-                  </p>
-                  <p className="text-xs text-blue-600 mt-1">
-                    User should change this password on first login.
-                  </p>
+              {/* Password info — changes based on plan */}
+              {isPasswordLocked ? (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 p-3 rounded-md flex items-start gap-2">
+                  <Lock className="h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-orange-800 dark:text-orange-200 font-medium">Password locked — Free Plan</p>
+                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
+                      Password is set to <strong>12345</strong> for all Free plan users. Upgrade to a paid plan to enable custom passwords.
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                !showEditModal && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 p-3 rounded-md">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      Default password: <strong>12345</strong>
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      User can change this after first login (paid plan active).
+                    </p>
+                  </div>
+                )
               )}
 
               <div className="flex justify-end space-x-3 pt-4">

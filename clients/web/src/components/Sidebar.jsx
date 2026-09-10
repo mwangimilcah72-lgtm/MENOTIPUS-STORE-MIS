@@ -1,6 +1,6 @@
 // src/components/Sidebar.jsx
 import React from 'react';
-import { 
+import {
   LayoutDashboard,
   Package,
   ShoppingCart,
@@ -16,7 +16,12 @@ import {
   Store,
   ArrowRightLeft,
   ShoppingBag,
-  Shield
+  Shield,
+  UserCircle,
+  CreditCard,
+  Layers,
+  FileText,
+  BadgeDollarSign
 } from 'lucide-react';
 
 const Sidebar = ({ activeView, setActiveView, userRole = 'user', isOpen, onClose, selectedStore }) => {
@@ -29,12 +34,17 @@ const Sidebar = ({ activeView, setActiveView, userRole = 'user', isOpen, onClose
     { id: 'stock-transfer', label: 'Stock Transfer', icon: ArrowRightLeft, requiresStoreAccess: true, showWhen: 'with-store' },
     { id: 'proxy-sales', label: 'Proxy Sales', icon: ShoppingCart, requiresStoreAccess: true, showWhen: 'with-store' },
     { id: 'reports', label: 'Reports', icon: BarChart3, showWhen: 'with-store' },
+    { id: 'customers', label: 'Customers (CRM)', icon: UserCircle, showWhen: 'with-store' },
+    { id: 'layaway', label: 'Layaway / Debt', icon: CreditCard, showWhen: 'with-store' },
+    { id: 'bundles', label: 'Bundles & Kits', icon: Layers, adminOnly: true, showWhen: 'with-store' },
     { id: 'master-data', label: 'Master Data', icon: Database, adminOnly: true, showWhen: 'with-store' },
     { id: 'expenses', label: 'Expenses', icon: DollarSign, adminOnly: true, showWhen: 'with-store' },
     { id: 'cashier-shifts', label: 'Cashier Shifts', icon: Calendar, adminOnly: false, showWhen: 'with-store' },
+    { id: 'audit-log', label: 'Audit Trail', icon: FileText, adminOnly: true, showWhen: 'with-store' },
     { id: 'stores', label: 'Stores', icon: Store, adminOnly: true, showWhen: 'no-store' },
     { id: 'suppliers', label: 'Suppliers', icon: Truck, adminOnly: true, showWhen: 'with-store' },
     { id: 'users', label: 'Users', icon: Users, adminOnly: true, showWhen: 'with-store' },
+    { id: 'subscriptions', label: 'Subscriptions', icon: BadgeDollarSign, adminOnly: true, showWhen: 'always' },
     { id: 'engineer-activation', label: 'Engineer Activation', icon: Shield, adminOnly: true, showWhen: 'always' },
     { id: 'support-queries', label: 'Support Queries', icon: HelpCircle, adminOnly: true, showWhen: 'always' },
     { id: 'settings', label: 'Settings', icon: Settings, adminOnly: true, showWhen: 'always' },

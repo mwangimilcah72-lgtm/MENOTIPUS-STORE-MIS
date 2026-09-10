@@ -21,19 +21,27 @@ import ContactPage from './components/ContactPage';
 import MasterData from './components/MasterData';
 import Expenses from './components/Expenses';
 import CashierShifts from './components/CashierShifts';
-import AdminSupportPanel from './components/AdminSupportPanel'; // 👈 IMPORTED
+import AdminSupportPanel from './components/AdminSupportPanel';
 import StoresManagement from './components/StoresManagement';
 import MasterControl from './components/MasterControl';
 import CompanyDashboard from './components/CompanyDashboard';
 import EngineerActivation from './components/EngineerActivation';
+import Customers from './components/Customers';
+import Layaway from './components/Layaway';
+import Bundles from './components/Bundles';
+import AuditLog from './components/AuditLog';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { InventoryProvider } from './contexts/InventoryContext';
 import { SalesProvider } from './contexts/SalesContext';
 import { SuppliersProvider } from './contexts/SuppliersContext';
 import { AppSettingsProvider } from './contexts/AppSettingsContext';
-import { SupportTicketsProvider } from './contexts/SupportTicketsContext'; // 👈 ADDED
-import { StoresProvider } from './contexts/StoresContext'; // 👈 NEW IMPORT
-import { ThemeProvider } from './contexts/ThemeContext'; // 👈 NEW IMPORT
+import { SupportTicketsProvider } from './contexts/SupportTicketsContext';
+import { StoresProvider } from './contexts/StoresContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { CustomerProvider } from './contexts/CustomerContext';
+import { AuditProvider } from './contexts/AuditContext';
+import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import Subscriptions from './components/Subscriptions';
 
 function AppContent() {
   const { user, isAuthenticated } = useAuth();
@@ -85,8 +93,18 @@ function AppContent() {
           return <Expenses />;
         case 'cashier-shifts':
           return <CashierShifts />;
-        case 'support-queries': // 👈 NEW ROUTE
-          return <AdminSupportPanel user={user} />; // 👈 PASS USER FOR CONTEXT
+        case 'customers':
+          return <Customers />;
+        case 'layaway':
+          return <Layaway />;
+        case 'bundles':
+          return <Bundles />;
+        case 'audit-log':
+          return <AuditLog />;
+        case 'subscriptions':
+          return <Subscriptions />;
+        case 'support-queries':
+          return <AdminSupportPanel user={user} />;
         default:
           return <Dashboard />;
       }
@@ -120,6 +138,8 @@ function AppContent() {
           return <StoresManagement />;
         case 'support-queries':
           return <AdminSupportPanel user={user} />;
+        case 'subscriptions':
+          return <Subscriptions />;
         case 'settings':
           return <Settings />;
         default:
@@ -171,7 +191,11 @@ function App() {
                     <SuppliersProvider>
                       <SupportTicketsProvider>
                         <StoresProvider>
-                          <LoginPage />
+                          <CustomerProvider>
+                            <AuditProvider>
+                              <LoginPage />
+                            </AuditProvider>
+                          </CustomerProvider>
                         </StoresProvider>
                       </SupportTicketsProvider>
                     </SuppliersProvider>
@@ -220,9 +244,15 @@ function App() {
                 <InventoryProvider>
                   <SalesProvider>
                     <SuppliersProvider>
-                      <SupportTicketsProvider> {/* 👈 WRAPPED HERE */}
-                        <StoresProvider> {/* 👈 NEW PROVIDER */}
-                          <AppContent />
+                      <SupportTicketsProvider>
+                        <StoresProvider>
+                          <CustomerProvider>
+                            <AuditProvider>
+                              <SubscriptionProvider>
+                                <AppContent />
+                              </SubscriptionProvider>
+                            </AuditProvider>
+                          </CustomerProvider>
                         </StoresProvider>
                       </SupportTicketsProvider>
                     </SuppliersProvider>

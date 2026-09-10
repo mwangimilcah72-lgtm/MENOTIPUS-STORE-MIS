@@ -3,27 +3,27 @@
     {
       "id": 1,
       "username": "admin",
-      "password": "admin123",
+      "password": "12345",
       "role": "admin",
       "name": "John Admin",
       "email": "admin@store.com",
       "phone": "+1234567890",
       "status": "active",
       "createdAt": "2025-12-23",
-      "pin": "2005",
+      "pin": "12345",
       "pinSet": true
     },
     {
       "id": 2,
       "username": "cashier",
-      "password": "cashier123",
+      "password": "12345",
       "role": "cashier",
       "name": "Jane Cashier",
       "email": "cashier@store.com",
       "phone": "+1234567891",
       "status": "active",
       "createdAt": "2025-12-23",
-      "pin": "1234",
+      "pin": "12345",
       "pinSet": true
     },
     {
@@ -37,7 +37,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "asmith123"
+      "password": "12345"
     },
     {
       "id": 8,
@@ -50,7 +50,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "rjones123"
+      "password": "12345"
     },
     {
       "id": 12,
@@ -63,7 +63,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "dmiller123"
+      "password": "12345"
     },
     {
       "id": 14,
@@ -76,7 +76,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "jdoe123"
+      "password": "12345"
     },
     {
       "id": 15,
@@ -89,7 +89,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "asmith123"
+      "password": "12345"
     },
     {
       "id": 16,
@@ -102,7 +102,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "bjohnson123"
+      "password": "12345"
     },
     {
       "id": 17,
@@ -115,7 +115,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "mwilliams123"
+      "password": "12345"
     },
     {
       "id": 18,
@@ -128,7 +128,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "rjones123"
+      "password": "12345"
     },
     {
       "id": 19,
@@ -141,7 +141,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "lgonzalez123"
+      "password": "12345"
     },
     {
       "id": 20,
@@ -154,7 +154,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "tbrown123"
+      "password": "12345"
     },
     {
       "id": 21,
@@ -167,7 +167,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "extended",
       "trialEndDate": "2026-04-07T11:29:22.264Z",
-      "password": "swilson123"
+      "password": "12345"
     },
     {
       "id": 22,
@@ -180,7 +180,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "dmiller123"
+      "password": "12345"
     },
     {
       "id": 23,
@@ -193,7 +193,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "kthomas123"
+      "password": "12345"
     },
     {
       "id": 24,
@@ -206,7 +206,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "extended",
       "trialEndDate": "2026-04-07T11:29:34.881Z",
-      "password": "jdoe123"
+      "password": "12345"
     },
     {
       "id": 25,
@@ -219,7 +219,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "asmith123"
+      "password": "12345"
     },
     {
       "id": 26,
@@ -232,7 +232,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "bjohnson123"
+      "password": "12345"
     },
     {
       "id": 27,
@@ -245,7 +245,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "mwilliams123"
+      "password": "12345"
     },
     {
       "id": 28,
@@ -258,7 +258,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "rjones123"
+      "password": "12345"
     },
     {
       "id": 29,
@@ -271,7 +271,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "lgonzalez123"
+      "password": "12345"
     },
     {
       "id": 30,
@@ -284,7 +284,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "tbrown123"
+      "password": "12345"
     },
     {
       "id": 31,
@@ -297,7 +297,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "swilson123"
+      "password": "12345"
     },
     {
       "id": 32,
@@ -310,7 +310,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "password": "dmiller123"
+      "password": "12345"
     },
     {
       "id": 33,
@@ -323,7 +323,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "kthomas123"
+      "password": "12345"
     },
     {
       "id": 34,
@@ -336,7 +336,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "vinc123"
+      "password": "12345"
     },
     {
       "id": 35,
@@ -349,12 +349,12 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "password": "Vincent123"
+      "password": "12345"
     },
     {
       "id": 100,
       "username": "sysadmin",
-      "password": "sysadmin123",
+      "password": "12345",
       "role": "systems_admin",
       "name": "System Admin",
       "email": "sysadmin@store.com",
@@ -363,7 +363,7 @@
       "createdAt": "2025-09-22",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "pin": "0000",
+      "pin": "12345",
       "pinSet": true,
       "stores": [
         1,
@@ -373,7 +373,7 @@
     {
       "id": 101,
       "username": "manager1",
-      "password": "manager123",
+      "password": "12345",
       "role": "manager",
       "name": "Store Manager",
       "email": "manager@store.com",
@@ -382,7 +382,7 @@
       "createdAt": "2026-03-04T00:00:00.000Z",
       "trialStatus": "active",
       "trialEndDate": "2026-03-11T00:00:00.000Z",
-      "pin": "1998",
+      "pin": "12345",
       "pinSet": true,
       "stores": [
         1,
@@ -393,7 +393,7 @@
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "vin@gmail.com",
-      "password": "123456789",
+      "password": "12345",
       "confirmPassword": "123456789",
       "role": "engineer",
       "fullName": "Vincent Rugundu",
@@ -401,7 +401,7 @@
       "createdAt": "2026-03-04T08:22:40.671Z",
       "verified": true,
       "pinSet": true,
-      "pin": "1234",
+      "pin": "12345",
       "stores": [],
       "status": "active",
       "trialStatus": "unlimited",
@@ -412,7 +412,7 @@
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "raheemvin1@gmail.com",
-      "password": "Lovelight369$",
+      "password": "12345",
       "confirmPassword": "Lovelight369$",
       "role": "engineer",
       "fullName": "Vincent Rugundu",
@@ -420,7 +420,7 @@
       "createdAt": "2026-03-04T08:23:43.237Z",
       "verified": true,
       "pinSet": true,
-      "pin": "1234",
+      "pin": "12345",
       "stores": [],
       "status": "active",
       "trialStatus": "unlimited",
@@ -431,7 +431,7 @@
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "manager1@gmail.com",
-      "password": "Lovelight369$",
+      "password": "12345",
       "confirmPassword": "Lovelight369$",
       "role": "cashier",
       "fullName": "Vincent Rugundu",
@@ -439,7 +439,7 @@
       "createdAt": "2026-03-04T09:05:55.480Z",
       "verified": true,
       "pinSet": true,
-      "pin": "1234",
+      "pin": "12345",
       "stores": [],
       "status": "active",
       "trialStatus": "active",
@@ -450,7 +450,7 @@
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "manager2@gmail.com",
-      "password": "654321",
+      "password": "12345",
       "confirmPassword": "654321",
       "role": "engineer",
       "fullName": "Vincent Rugundu",
@@ -462,16 +462,16 @@
       "status": "active",
       "trialStatus": "unlimited",
       "trialEndDate": null,
-      "pin": "2000",
+      "pin": "12345",
       "id": 105
     },
     {
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "vrugundu001@metanopus.com",
-      "password": "123456",
+      "password": "12345",
       "confirmPassword": "123456",
-      "pin": "1998",
+      "pin": "12345",
       "confirmPin": "1998",
       "role": "owner",
       "fullName": "Vincent Rugundu",
@@ -500,9 +500,9 @@
       "firstName": "Vincent",
       "lastName": "Rugundu",
       "email": "sysadmin@domain.com",
-      "password": "123456",
+      "password": "12345",
       "confirmPassword": "123456",
-      "pin": "1234",
+      "pin": "12345",
       "confirmPin": "1234",
       "role": "engineer",
       "fullName": "Vincent Rugundu",
@@ -534,7 +534,7 @@
       "sku": "MG-001",
       "costPrice": 3.25,
       "sellingPrice": 12.99,
-      "stock": 767,
+      "stock": 762,
       "minStock": 40,
       "barcode": "456789012345",
       "supplierId": 3,
@@ -548,7 +548,8 @@
       ],
       "conversionFactors": {
         "piece": 1
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?coffee+mug+ceramic"
     },
     {
       "id": 25,
@@ -557,7 +558,7 @@
       "sku": "L-001",
       "costPrice": 22.75,
       "sellingPrice": 45.5,
-      "stock": 207,
+      "stock": 201,
       "minStock": 10,
       "barcode": "567890123456",
       "supplierId": 2,
@@ -571,7 +572,8 @@
       ],
       "conversionFactors": {
         "piece": 1
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?desk+lamp+modern"
     },
     {
       "id": 26,
@@ -580,7 +582,7 @@
       "sku": "NB-001",
       "costPrice": 8.99,
       "sellingPrice": 19.99,
-      "stock": 529,
+      "stock": 528,
       "minStock": 20,
       "barcode": "678901234567",
       "supplierId": 3,
@@ -596,7 +598,8 @@
       "conversionFactors": {
         "piece": 1,
         "dozen": 12
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?notebook+journal+stationery"
     },
     {
       "id": 28,
@@ -605,7 +608,7 @@
       "sku": "WB-001",
       "costPrice": 12.5,
       "sellingPrice": 24.99,
-      "stock": 168,
+      "stock": 160,
       "minStock": 30,
       "barcode": 890123456789,
       "supplierId": 3,
@@ -619,7 +622,8 @@
       ],
       "conversionFactors": {
         "piece": 1
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?water+bottle+sports"
     },
     {
       "id": 29,
@@ -644,7 +648,8 @@
       "conversionFactors": {
         "piece": 1,
         "dozen": 12
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?desk+organizer+office"
     },
     {
       "id": 35,
@@ -653,7 +658,7 @@
       "sku": "L-001",
       "costPrice": 22.75,
       "sellingPrice": 45.5,
-      "stock": 56,
+      "stock": 52,
       "minStock": 10,
       "barcode": "567890123456",
       "supplierId": 2,
@@ -667,7 +672,8 @@
       ],
       "conversionFactors": {
         "piece": 1
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?lamp+table+light"
     },
     {
       "id": 36,
@@ -692,7 +698,8 @@
       "conversionFactors": {
         "piece": 1,
         "dozen": 12
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?planner+notebook+pen"
     },
     {
       "id": 38,
@@ -715,7 +722,8 @@
       ],
       "conversionFactors": {
         "piece": 1
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?reusable+water+bottle"
     },
     {
       "id": 39,
@@ -724,7 +732,7 @@
       "sku": "DO-001",
       "costPrice": 18.99,
       "sellingPrice": 34.99,
-      "stock": 5,
+      "stock": 4,
       "minStock": 8,
       "barcode": "901234567890",
       "supplierId": 2,
@@ -740,7 +748,8 @@
       "conversionFactors": {
         "piece": 1,
         "dozen": 12
-      }
+      },
+      "image": "https://source.unsplash.com/featured/200x200/?office+stationery+organizer"
     },
     {
       "name": "Mouthpiece",
@@ -764,7 +773,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 40
+      "id": 40,
+      "image": "https://source.unsplash.com/featured/200x200/?microphone+audio+tech"
     },
     {
       "name": "Rap Damu",
@@ -781,7 +791,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 41
+      "id": 41,
+      "image": "https://source.unsplash.com/featured/200x200/?office+supplies+desk"
     },
     {
       "name": "Phoenix",
@@ -798,7 +809,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 42
+      "id": 42,
+      "image": "https://source.unsplash.com/featured/200x200/?modern+sofa+furniture"
     },
     {
       "name": "Jay Z",
@@ -815,7 +827,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 43
+      "id": 43,
+      "image": "https://source.unsplash.com/featured/200x200/?kitchen+cookware+pot"
     },
     {
       "name": "Fetty Wap",
@@ -832,7 +845,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 44
+      "id": 44,
+      "image": "https://source.unsplash.com/featured/200x200/?home+interior+decor"
     },
     {
       "name": "Drake",
@@ -849,7 +863,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 45
+      "id": 45,
+      "image": "https://source.unsplash.com/featured/200x200/?pencil+stationery+writing"
     },
     {
       "name": "Kendrick Lamar",
@@ -866,7 +881,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 46
+      "id": 46,
+      "image": "https://source.unsplash.com/featured/200x200/?fitness+gym+equipment"
     },
     {
       "name": "Wireless Earbuds",
@@ -883,7 +899,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 47
+      "id": 47,
+      "image": "https://source.unsplash.com/featured/200x200/?wireless+earbuds+headphones"
     },
     {
       "name": "Yoga Mat",
@@ -900,7 +917,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 48
+      "id": 48,
+      "image": "https://source.unsplash.com/featured/200x200/?yoga+mat+exercise"
     },
     {
       "name": "Stainless Steel Tumbler",
@@ -917,7 +935,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 49
+      "id": 49,
+      "image": "https://source.unsplash.com/featured/200x200/?tumbler+travel+mug+steel"
     },
     {
       "name": "LED Desk Lamp",
@@ -934,7 +953,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 50
+      "id": 50,
+      "image": "https://source.unsplash.com/featured/200x200/?led+desk+light"
     },
     {
       "name": "Leather Wallet",
@@ -951,7 +971,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 51
+      "id": 51,
+      "image": "https://source.unsplash.com/featured/200x200/?leather+wallet+fashion"
     },
     {
       "name": "Protein Powder",
@@ -968,7 +989,9 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 52
+      "expiryDate": "2026-06-25",
+      "id": 52,
+      "image": "https://source.unsplash.com/featured/200x200/?protein+supplement+health"
     },
     {
       "name": "Bluetooth Speaker",
@@ -985,7 +1008,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 53
+      "id": 53,
+      "image": "https://source.unsplash.com/featured/200x200/?bluetooth+portable+speaker"
     },
     {
       "name": "Cotton T-Shirt",
@@ -1002,7 +1026,8 @@
       "status": "active",
       "createdAt": "2025-10-02",
       "currencyAtCreation": "EUR",
-      "id": 54
+      "id": 54,
+      "image": "https://source.unsplash.com/featured/200x200/?white+cotton+tshirt"
     },
     {
       "name": "Ciw",
@@ -1026,7 +1051,8 @@
       "status": "active",
       "createdAt": "2025-12-21",
       "currencyAtCreation": "EUR",
-      "id": 55
+      "id": 55,
+      "image": "https://source.unsplash.com/featured/200x200/?product+item+store"
     }
   ],
   "suppliers": [
@@ -1957,6 +1983,222 @@
       "customerId": null,
       "customerName": "Walk-in Customer",
       "status": "completed"
+    },
+    {
+      "items": [
+        {
+          "productId": 25,
+          "productName": "Desk Lamp",
+          "quantity": 1,
+          "price": 45.5,
+          "total": 45.5,
+          "isBundle": false
+        },
+        {
+          "productId": 26,
+          "productName": "Notebook Set",
+          "quantity": 1,
+          "price": 19.99,
+          "total": 19.99,
+          "isBundle": false
+        }
+      ],
+      "customer": {
+        "name": "",
+        "phone": "",
+        "email": ""
+      },
+      "customerId": null,
+      "customerName": "Walk-in Customer",
+      "customerPhone": "",
+      "paymentMethod": "cash",
+      "payments": [
+        {
+          "method": "cash",
+          "amount": "65.49"
+        }
+      ],
+      "subtotal": 65.49,
+      "tax": 0,
+      "discount": 0,
+      "pointsRedeemed": 0,
+      "total": 65.49,
+      "userId": 1,
+      "cashierName": "John Admin",
+      "timestamp": "2026-06-14T17:03:11.139Z",
+      "date": "2026-06-14",
+      "storeId": null,
+      "id": 34
+    },
+    {
+      "items": [
+        {
+          "productId": 35,
+          "productName": "Desk Lamp",
+          "quantity": 1,
+          "price": 45.5,
+          "total": 45.5,
+          "isBundle": false
+        },
+        {
+          "productId": 26,
+          "productName": "Notebook Set",
+          "quantity": 1,
+          "price": 19.99,
+          "total": 19.99,
+          "isBundle": false
+        }
+      ],
+      "customer": {
+        "name": "",
+        "phone": "",
+        "email": ""
+      },
+      "customerId": null,
+      "customerName": "Walk-in Customer",
+      "customerPhone": "",
+      "paymentMethod": "cash",
+      "payments": [
+        {
+          "method": "cash",
+          "amount": "65.49"
+        }
+      ],
+      "subtotal": 65.49,
+      "tax": 0,
+      "discount": 0,
+      "pointsRedeemed": 0,
+      "total": 65.49,
+      "userId": 1,
+      "cashierName": "John Admin",
+      "timestamp": "2026-06-14T17:11:59.819Z",
+      "date": "2026-06-14",
+      "storeId": null,
+      "id": 35
+    },
+    {
+      "items": [
+        {
+          "productId": 28,
+          "productName": "Water Bottle",
+          "quantity": 8,
+          "price": 24.99,
+          "total": 199.92,
+          "isBundle": false
+        },
+        {
+          "productId": 35,
+          "productName": "Desk Lamp",
+          "quantity": 4,
+          "price": 45.5,
+          "total": 182,
+          "isBundle": false
+        },
+        {
+          "productId": 25,
+          "productName": "Desk Lamp",
+          "quantity": 5,
+          "price": 45.5,
+          "total": 227.5,
+          "isBundle": false
+        },
+        {
+          "productId": 24,
+          "productName": "Coffee Mug",
+          "quantity": 4,
+          "price": 12.99,
+          "total": 51.96,
+          "isBundle": false
+        },
+        {
+          "productId": 26,
+          "productName": "Notebook Set",
+          "quantity": 1,
+          "price": 19.99,
+          "total": 19.99,
+          "isBundle": false
+        }
+      ],
+      "customer": {
+        "name": "",
+        "phone": "",
+        "email": ""
+      },
+      "customerId": null,
+      "customerName": "Walk-in Customer",
+      "customerPhone": "",
+      "paymentMethod": "cash",
+      "payments": [
+        {
+          "method": "cash",
+          "amount": "681.37"
+        }
+      ],
+      "subtotal": 681.37,
+      "tax": 0,
+      "discount": 0,
+      "pointsRedeemed": 0,
+      "total": 681.37,
+      "userId": 1,
+      "cashierName": "John Admin",
+      "timestamp": "2026-06-14T17:13:01.098Z",
+      "date": "2026-06-14",
+      "storeId": null,
+      "id": 36
+    },
+    {
+      "items": [
+        {
+          "productId": 24,
+          "productName": "Coffee Mug",
+          "quantity": 1,
+          "price": 12.99,
+          "total": 12.99,
+          "isBundle": false
+        },
+        {
+          "productId": 25,
+          "productName": "Desk Lamp",
+          "quantity": 1,
+          "price": 45.5,
+          "total": 45.5,
+          "isBundle": false
+        },
+        {
+          "productId": 39,
+          "productName": "Desk Organizer",
+          "quantity": 1,
+          "price": 34.99,
+          "total": 34.99,
+          "isBundle": false
+        }
+      ],
+      "customer": {
+        "name": "",
+        "phone": "",
+        "email": ""
+      },
+      "customerId": null,
+      "customerName": "Walk-in Customer",
+      "customerPhone": "",
+      "paymentMethod": "cash",
+      "payments": [
+        {
+          "method": "cash",
+          "amount": "93.48"
+        }
+      ],
+      "subtotal": 93.48,
+      "tax": 0,
+      "discount": 0,
+      "pointsRedeemed": 0,
+      "total": 93.48,
+      "userId": 100,
+      "cashierName": "System Admin",
+      "timestamp": "2026-08-23T09:59:44.987Z",
+      "date": "2026-08-23",
+      "storeId": 1,
+      "id": 37
     }
   ],
   "purchaseOrders": [
@@ -2014,6 +2256,25 @@
     "taxRate": 12.01,
     "logo": null,
     "receiptFooter": "Thank you for shopping with us!",
+    "receiptTemplate": {
+      "logo": null,
+      "headerText": "METANOPUS STORE",
+      "footerText": "Thank you for shopping with us!",
+      "socialMedia": "@metanopus",
+      "returnPolicy": "30-day return policy on all items",
+      "showTaxBreakdown": true,
+      "thermalWidth": "58mm"
+    },
+    "mpesaConfig": {
+      "consumerKey": "",
+      "consumerSecret": "",
+      "shortCode": "",
+      "passKey": "",
+      "callbackUrl": "",
+      "environment": "sandbox"
+    },
+    "discountPinThreshold": 10,
+    "loyaltyPointsRate": 10,
     "businessHours": {
       "monday": "09:00-18:00",
       "tuesday": "09:00-18:00",
@@ -2184,6 +2445,241 @@
       "createdBy": 106,
       "createdAt": "2026-02-16T17:41:40.383Z",
       "id": 4
+    }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "name": "Mary Wanjiru",
+      "phone": "+254712345678",
+      "email": "mary.w@gmail.com",
+      "totalSpend": 4500,
+      "pointsBalance": 450,
+      "createdAt": "2025-10-01",
+      "notes": "Loyal customer, prefers electronics"
+    },
+    {
+      "id": 2,
+      "name": "James Otieno",
+      "phone": "+254723456789",
+      "email": "j.otieno@yahoo.com",
+      "totalSpend": 12800,
+      "pointsBalance": 1280,
+      "createdAt": "2025-09-15",
+      "notes": "Wholesale buyer"
+    },
+    {
+      "id": 3,
+      "name": "Fatuma Hassan",
+      "phone": "+254734567890",
+      "email": "",
+      "totalSpend": 3200,
+      "pointsBalance": 320,
+      "createdAt": "2025-11-20",
+      "notes": ""
+    }
+  ],
+  "layaway": [
+    {
+      "id": 1,
+      "customerId": 2,
+      "customerName": "James Otieno",
+      "customerPhone": "+254723456789",
+      "items": [
+        {
+          "productId": 47,
+          "productName": "Wireless Earbuds",
+          "quantity": 2,
+          "price": 59.99,
+          "total": 119.98
+        }
+      ],
+      "totalAmount": 119.98,
+      "depositPaid": 40,
+      "balanceDue": 79.98,
+      "dueDate": "2026-07-15",
+      "status": "active",
+      "createdAt": "2026-06-01",
+      "payments": [
+        {
+          "id": 1,
+          "amount": 40,
+          "method": "cash",
+          "date": "2026-06-01",
+          "note": "Initial deposit"
+        }
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "id": 1,
+      "name": "School Starter Pack",
+      "sku": "BUNDLE-001",
+      "sellingPrice": 39.99,
+      "components": [
+        {
+          "productId": 26,
+          "productName": "Notebook Set",
+          "quantity": 1
+        },
+        {
+          "productId": 45,
+          "productName": "Drake (Stationery)",
+          "quantity": 1
+        }
+      ],
+      "status": "active",
+      "description": "Notebook + stationery bundle for students",
+      "createdAt": "2026-01-10"
+    }
+  ],
+  "auditLog": [
+    {
+      "id": 1,
+      "userId": 1,
+      "userName": "John Admin",
+      "action": "CREATE",
+      "resource": "product",
+      "resourceId": 55,
+      "oldValue": null,
+      "newValue": "Ciw (cai)",
+      "timestamp": "2025-12-21T10:00:00.000Z"
+    }
+  ],
+  "storePriceOverrides": [],
+  "subscriptionPlans": [
+    {
+      "id": "free",
+      "name": "Free",
+      "price": 0,
+      "currency": "KES",
+      "billingCycle": "monthly",
+      "maxUsers": 1,
+      "maxStores": 1,
+      "maxProducts": 100,
+      "passwordLocked": true,
+      "features": [
+        "Basic POS",
+        "Inventory (100 products)",
+        "1 User",
+        "1 Store",
+        "Basic Reports"
+      ],
+      "disabledFeatures": [
+        "CRM & Loyalty",
+        "M-Pesa Integration",
+        "Layaway/Debt",
+        "Bundles",
+        "P&L & VAT Reports",
+        "Audit Trail",
+        "Multi-store",
+        "Barcode Scanner"
+      ],
+      "badge": null,
+      "description": "Get started for free. Password locked to system default.",
+      "color": "gray"
+    },
+    {
+      "id": "starter",
+      "name": "Starter",
+      "price": 1999,
+      "currency": "KES",
+      "billingCycle": "monthly",
+      "maxUsers": 5,
+      "maxStores": 1,
+      "maxProducts": 500,
+      "passwordLocked": false,
+      "features": [
+        "Full POS",
+        "Inventory (500 products)",
+        "5 Users",
+        "1 Store",
+        "M-Pesa Integration",
+        "Barcode Scanner",
+        "Customer Receipts",
+        "All Reports"
+      ],
+      "disabledFeatures": [
+        "CRM & Loyalty",
+        "Layaway/Debt",
+        "Bundles & Kits",
+        "P&L & VAT Reports",
+        "Audit Trail",
+        "Multi-store"
+      ],
+      "badge": null,
+      "description": "Perfect for a single shop getting serious.",
+      "color": "blue"
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "price": 3999,
+      "currency": "KES",
+      "billingCycle": "monthly",
+      "maxUsers": 15,
+      "maxStores": 3,
+      "maxProducts": -1,
+      "passwordLocked": false,
+      "features": [
+        "Everything in Starter",
+        "Unlimited Products",
+        "15 Users",
+        "3 Stores",
+        "CRM & Loyalty Points",
+        "Layaway / Debt Tracking",
+        "Product Bundles & Kits",
+        "P&L Statement",
+        "VAT / Tax Reports",
+        "Shift Scorecards"
+      ],
+      "disabledFeatures": [
+        "Audit Trail",
+        "White-label"
+      ],
+      "badge": "Most Popular",
+      "description": "For growing businesses with multiple staff.",
+      "color": "indigo"
+    },
+    {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "price": 9999,
+      "currency": "KES",
+      "billingCycle": "monthly",
+      "maxUsers": -1,
+      "maxStores": -1,
+      "maxProducts": -1,
+      "passwordLocked": false,
+      "features": [
+        "Everything in Business",
+        "Unlimited Users & Stores",
+        "Full Audit Trail",
+        "AI Reorder Suggestions",
+        "Priority Support",
+        "Custom Receipt Branding",
+        "Inter-store Price Override",
+        "Dedicated Account Manager"
+      ],
+      "disabledFeatures": [],
+      "badge": "Best Value",
+      "description": "Chains, franchises, and high-volume retailers.",
+      "color": "purple"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1,
+      "companyId": "vrugundu001@metanopus.com",
+      "planId": "business",
+      "status": "active",
+      "startDate": "2026-06-01",
+      "endDate": "2026-07-01",
+      "activatedBy": 100,
+      "activatedByName": "System Admin",
+      "notes": "Demo account",
+      "createdAt": "2026-06-01T00:00:00.000Z"
     }
   ]
 }

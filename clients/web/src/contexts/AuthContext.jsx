@@ -25,10 +25,35 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState(DEFAULT_PERMISSIONS);
 
+  // Auth disabled for exploration: auto-login as a full-access user, no credentials needed.
+  const EXPLORE_MODE = true;
+  const EXPLORE_USER = {
+    id: 100,
+    username: 'sysadmin',
+    role: 'systems_admin',
+    name: 'System Admin',
+    email: 'sysadmin@store.com',
+    phone: '+1234567899',
+    status: 'active',
+    createdAt: '2025-09-22',
+    trialStatus: 'unlimited',
+    trialEndDate: null,
+    pin: '12345',
+    pinSet: true,
+    stores: [1, 1]
+  };
+
   useEffect(() => {
+    if (EXPLORE_MODE) {
+      setUser(EXPLORE_USER);
+      setIsAuthenticated(true);
+      setLoading(false);
+      return;
+    }
+
     const savedUser = localStorage.getItem('user');
     const savedPermissions = localStorage.getItem('rolePermissions');
-    
+
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
       // Check if user needs to set PIN
@@ -40,7 +65,7 @@ export const AuthProvider = ({ children }) => {
       setUser(parsedUser);
       setIsAuthenticated(true);
     }
-    
+
     if (savedPermissions) {
       try {
         setPermissions(JSON.parse(savedPermissions));
@@ -48,12 +73,12 @@ export const AuthProvider = ({ children }) => {
         console.error('Failed to parse permissions');
       }
     }
-    
+
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (EXPLORE_MODE || !isAuthenticated) return;
     const timeout = setTimeout(() => {
       logout();
       alert('You have been logged out due to inactivity.');
@@ -205,6 +230,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    if (EXPLORE_MODE) return; // exploration mode: logout disabled
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('user');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Calendar, Download, TrendingUp, DollarSign, Package, Users, BarChart3, PieChart as PieChartIcon, FileDown
+import {
+  Calendar, Download, TrendingUp, DollarSign, Package, Users, BarChart3, PieChart as PieChartIcon, FileDown,
+  Layers, FileText, Receipt
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, ReferenceLine
@@ -26,10 +27,17 @@ const Reports = () => {
   const { sales, getSalesStats } = useSales();
   const { products } = useInventory();
   const { settings } = useAppSettings();
+  const [activeTab, setActiveTab] = useState('overview'); // overview | pl | vat
   const [dateRange, setDateRange] = useState('7d');
   const [reportData, setReportData] = useState({ dailySales: [], topProducts: [], categoryBreakdown: [] });
   const [filters, setFilters] = useState({ customerName: '', receiptNo: '', paymentMethod: '', minAmount: '', maxAmount: '' });
+  const [plMonth, setPlMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [expenses, setExpenses] = useState([]);
   const chartRef = useRef(null);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/expenses').then(r => r.ok ? r.json() : []).then(setExpenses).catch(() => setExpenses([]));
+  }, []);
 
   const salesStats = getSalesStats();
 
@@ -152,6 +160,28 @@ const Reports = () => {
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316'];
 
+  // P&L calculations for selected month
+  const plSales = sales.filter(s => s.date?.startsWith(plMonth));
+  const revenue = plSales.reduce((s, sale) => s + (sale.total || 0), 0);
+  const cogs = plSales.reduce((s, sale) => {
+    if (!sale.items) return s;
+    return s + sale.items.reduce((iSum, item) => {
+      const p = products.find(p => p.id === item.productId);
+      return iSum + (p ? p.costPrice * item.quantity : 0);
+    }, 0);
+  }, 0);
+  const grossProfit = revenue - cogs;
+  const monthExpenses = expenses.filter(e => e.date?.startsWith(plMonth));
+  const opex = monthExpenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const netProfit = grossProfit - opex;
+
+  // VAT calculations
+  const taxRate = settings?.taxRate || 0;
+  const vatSales = sales.filter(s => s.date?.startsWith(plMonth));
+  const taxableAmount = vatSales.reduce((s, sale) => s + (sale.subtotal || sale.total || 0), 0);
+  const vatCollected = vatSales.reduce((s, sale) => s + (sale.tax || 0), 0);
+  const totalSalesVat = vatSales.reduce((s, sale) => s + (sale.total || 0), 0);
+
   if (!sales || !products) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -168,37 +198,139 @@ const Reports = () => {
             Reports & Analytics
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
-            Track revenue, profit, and performance trends with beautiful, interactive charts.
+            Track revenue, profit, VAT, and performance trends.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <select
-            className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
+          {activeTab === 'overview' && (
+            <select
+              className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+            >
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="90d">Last 90 Days</option>
+            </select>
+          )}
+          {(activeTab === 'pl' || activeTab === 'vat') && (
+            <input type="month" value={plMonth} onChange={e => setPlMonth(e.target.value)}
+              className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700 dark:text-white" />
+          )}
+          <button
+            onClick={() => exportToCSV(reportData.dailySales, 'daily-sales-report')}
+            className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 shadow-sm"
           >
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
-            <option value="90d">Last 90 Days</option>
-          </select>
-          <div className="flex gap-2">
+            <Download className="h-4 w-4" /> Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Tab navigation */}
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl w-fit border border-gray-200 dark:border-gray-700">
+        {[
+          { id: 'overview', label: 'Overview', icon: BarChart3 },
+          { id: 'pl', label: 'P&L Statement', icon: TrendingUp },
+          { id: 'vat', label: 'VAT / Tax Report', icon: Receipt },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${activeTab === tab.id ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}>
+            <tab.icon className="h-4 w-4" /> {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* P&L Statement Tab */}
+      {activeTab === 'pl' && (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+              <TrendingUp className="h-6 w-6 text-green-600" />
+              Profit & Loss — {plMonth}
+            </h3>
+            <div className="space-y-1">
+              {[
+                { label: 'Gross Revenue', value: revenue, bold: false, indent: 0, color: '' },
+                { label: 'Cost of Goods Sold (COGS)', value: -cogs, bold: false, indent: 1, color: 'text-red-600 dark:text-red-400' },
+                { label: 'Gross Profit', value: grossProfit, bold: true, indent: 0, color: grossProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400', border: true },
+                { label: 'Operating Expenses', value: -opex, bold: false, indent: 1, color: 'text-red-600 dark:text-red-400' },
+                { label: 'Net Profit', value: netProfit, bold: true, indent: 0, color: netProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400', border: true, big: true },
+              ].map((row, i) => (
+                <div key={i} className={`flex justify-between items-center py-3 ${row.border ? 'border-t-2 border-gray-200 dark:border-gray-600 mt-2' : 'border-b border-gray-100 dark:border-gray-700'} ${row.indent ? 'pl-6' : ''}`}>
+                  <span className={`${row.bold ? 'font-bold' : ''} ${row.big ? 'text-lg' : 'text-sm'} text-gray-700 dark:text-gray-300`}>{row.label}</span>
+                  <span className={`${row.bold ? 'font-bold' : 'font-medium'} ${row.big ? 'text-xl' : 'text-base'} ${row.color || 'text-gray-900 dark:text-white'}`}>
+                    {row.value < 0 ? '-' : ''}{formatPrice(Math.abs(row.value))}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {[
+                { label: 'Gross Margin', value: revenue > 0 ? `${((grossProfit / revenue) * 100).toFixed(1)}%` : '0%' },
+                { label: 'Net Margin', value: revenue > 0 ? `${((netProfit / revenue) * 100).toFixed(1)}%` : '0%' },
+                { label: 'Sales Count', value: plSales.length },
+              ].map(m => (
+                <div key={m.label} className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{m.label}</p>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">{m.value}</p>
+                </div>
+              ))}
+            </div>
+            {opex === 0 && (
+              <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">* No expenses recorded for {plMonth}. Add expenses in the Expenses module to see full P&L.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* VAT / Tax Report Tab */}
+      {activeTab === 'vat' && (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+              <Receipt className="h-6 w-6 text-purple-600" />
+              VAT / Tax Report — {plMonth}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">KRA-ready tax summary for this period (Tax Rate: {taxRate}%)</p>
+            <div className="space-y-1 mb-6">
+              {[
+                { label: 'Total Sales (incl. tax)', value: totalSalesVat },
+                { label: 'Taxable Amount (excl. tax)', value: taxableAmount, indent: true },
+                { label: `VAT Rate`, value: `${taxRate}%`, isString: true },
+                { label: 'VAT Collected', value: vatCollected, bold: true, color: 'text-purple-600 dark:text-purple-400', border: true },
+              ].map((row, i) => (
+                <div key={i} className={`flex justify-between items-center py-3 ${row.border ? 'border-t-2 border-gray-200 dark:border-gray-600 mt-2' : 'border-b border-gray-100 dark:border-gray-700'} ${row.indent ? 'pl-6' : ''}`}>
+                  <span className={`text-sm ${row.bold ? 'font-bold' : ''} text-gray-700 dark:text-gray-300`}>{row.label}</span>
+                  <span className={`${row.bold ? 'font-bold text-lg' : 'font-medium'} ${row.color || 'text-gray-900 dark:text-white'}`}>
+                    {row.isString ? row.value : formatPrice(row.value)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
+              <p className="text-sm font-semibold text-purple-800 dark:text-purple-200 mb-2">KRA Filing Summary</p>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><p className="text-gray-500">Period</p><p className="font-medium dark:text-white">{plMonth}</p></div>
+                <div><p className="text-gray-500">Total Sales</p><p className="font-medium dark:text-white">{formatPrice(totalSalesVat)}</p></div>
+                <div><p className="text-gray-500">Output VAT</p><p className="font-bold text-purple-700 dark:text-purple-300">{formatPrice(vatCollected)}</p></div>
+                <div><p className="text-gray-500">Transactions</p><p className="font-medium dark:text-white">{vatSales.length}</p></div>
+              </div>
+            </div>
             <button
-              onClick={() => exportToCSV(reportData.dailySales, 'daily-sales-report')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 shadow-sm hover:shadow-md"
+              onClick={() => {
+                const html = `<html><head><title>VAT Report ${plMonth}</title><style>body{font-family:Arial;max-width:600px;margin:40px auto}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd}th{background:#f5f5f5}</style></head><body><h2>VAT Report — ${plMonth}</h2><p>Tax Rate: ${taxRate}%</p><table><tr><th>Item</th><th>Amount</th></tr><tr><td>Total Sales</td><td>${formatPrice(totalSalesVat)}</td></tr><tr><td>Taxable Amount</td><td>${formatPrice(taxableAmount)}</td></tr><tr><td>VAT Collected</td><td><strong>${formatPrice(vatCollected)}</strong></td></tr></table><p>Generated: ${new Date().toLocaleString()}</p></body></html>`;
+                const w = window.open('', '_blank'); w.document.write(html); w.document.close(); w.print();
+              }}
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700"
             >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </button>
-            <button
-              onClick={() => alert('PNG export requires additional library')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <FileDown className="h-4 w-4" />
-              Export PNG
+              <FileText className="h-4 w-4" /> Print VAT Report
             </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Overview Tab */}
+      {activeTab === 'overview' && (<>
 
       {/* Advanced Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -424,6 +556,7 @@ const Reports = () => {
           </div>
         ))}
       </div>
+      </>)}
     </div>
   );
 };

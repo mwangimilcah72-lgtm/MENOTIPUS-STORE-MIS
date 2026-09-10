@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DollarSign, Clock, Save, AlertTriangle, CheckCircle, RefreshCw, Bell, HelpCircle, Package, ShoppingCart, Info, Shield, Users, Package as PackageIcon, BarChart3, Settings as SettingsIcon
+import {
+  DollarSign, Clock, Save, AlertTriangle, CheckCircle, RefreshCw, Bell, HelpCircle, Package, ShoppingCart, Info, Shield, Users, Package as PackageIcon, BarChart3, Settings as SettingsIcon,
+  Smartphone, Receipt, Percent, Eye, EyeOff
 } from 'lucide-react';
 import { useAppSettings } from '../contexts/AppSettingsContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,6 +13,7 @@ const Settings = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const [localPermissions, setLocalPermissions] = useState(permissions);
+  const [showMpesaSecret, setShowMpesaSecret] = useState(false);
 
   useEffect(() => {
     if (settings) setLocalSettings(settings);
@@ -247,6 +249,185 @@ const Settings = () => {
               </label>
             </div>
           ))}
+        </div>
+
+        {/* Discount PIN Threshold */}
+        <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+          <div className="flex items-center mb-4">
+            <Percent className="h-6 w-6 text-orange-600 dark:text-orange-400 mr-3" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Discount Authorization</h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Manager PIN required for discounts above (%):
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={localSettings.discountPinThreshold ?? 10}
+                onChange={e => handleSettingChange('discountPinThreshold', parseFloat(e.target.value))}
+                className="w-24 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Cashiers must enter a manager PIN to apply discounts exceeding this threshold at the POS.
+          </p>
+        </div>
+
+        {/* Loyalty Points Rate */}
+        <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+          <div className="flex items-center mb-4">
+            <Bell className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mr-3" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Loyalty Points</h2>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Points earned per 1 unit of currency spent (e.g. 10 = 1 point per KSh 10)
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={localSettings.loyaltyPointsRate ?? 10}
+              onChange={e => handleSettingChange('loyaltyPointsRate', parseInt(e.target.value))}
+              className="w-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            />
+          </div>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            1 point = 1 currency unit redeemable. Max 10% of sale value redeemable per transaction.
+          </p>
+        </div>
+
+        {/* M-Pesa / Daraja API Configuration */}
+        <div className="mb-8 p-6 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700">
+          <div className="flex items-center mb-4">
+            <Smartphone className="h-6 w-6 text-emerald-600 dark:text-emerald-400 mr-3" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">M-Pesa / Daraja API</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { key: 'shortCode', label: 'Business Short Code', placeholder: '174379' },
+              { key: 'consumerKey', label: 'Consumer Key', placeholder: 'From Daraja portal' },
+              { key: 'passKey', label: 'Passkey', placeholder: 'LNM Passkey' },
+              { key: 'callbackUrl', label: 'Callback URL', placeholder: 'https://yourdomain.com/api/mpesa/callback' },
+            ].map(field => (
+              <div key={field.key}>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{field.label}</label>
+                <input
+                  type="text"
+                  placeholder={field.placeholder}
+                  value={(localSettings.mpesaConfig || {})[field.key] || ''}
+                  onChange={e => handleSettingChange('mpesaConfig', { ...(localSettings.mpesaConfig || {}), [field.key]: e.target.value })}
+                  className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                />
+              </div>
+            ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Consumer Secret</label>
+              <div className="relative">
+                <input
+                  type={showMpesaSecret ? 'text' : 'password'}
+                  placeholder="From Daraja portal"
+                  value={(localSettings.mpesaConfig || {}).consumerSecret || ''}
+                  onChange={e => handleSettingChange('mpesaConfig', { ...(localSettings.mpesaConfig || {}), consumerSecret: e.target.value })}
+                  className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm pr-10"
+                />
+                <button type="button" onClick={() => setShowMpesaSecret(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  {showMpesaSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Environment</label>
+              <select
+                value={(localSettings.mpesaConfig || {}).environment || 'sandbox'}
+                onChange={e => handleSettingChange('mpesaConfig', { ...(localSettings.mpesaConfig || {}), environment: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+              >
+                <option value="sandbox">Sandbox (Testing)</option>
+                <option value="production">Production (Live)</option>
+              </select>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-emerald-700 dark:text-emerald-300">
+            Register at <strong>developer.safaricom.co.ke</strong> → Create App → Get Consumer Key & Secret. Use Business Short Code + Passkey for STK Push.
+          </p>
+        </div>
+
+        {/* Receipt Template */}
+        <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+          <div className="flex items-center mb-4">
+            <Receipt className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Receipt Template</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Header Text</label>
+              <input
+                type="text"
+                value={(localSettings.receiptTemplate || {}).headerText || ''}
+                onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), headerText: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                placeholder="e.g. METANOPUS STORE"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Social Media Handle</label>
+              <input
+                type="text"
+                value={(localSettings.receiptTemplate || {}).socialMedia || ''}
+                onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), socialMedia: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                placeholder="@yourbusiness"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Footer Text</label>
+              <input
+                type="text"
+                value={(localSettings.receiptTemplate || {}).footerText || ''}
+                onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), footerText: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                placeholder="Thank you for shopping with us!"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Return Policy (printed on receipt)</label>
+              <textarea
+                rows={2}
+                value={(localSettings.receiptTemplate || {}).returnPolicy || ''}
+                onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), returnPolicy: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                placeholder="30-day return policy on all items with receipt"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Paper Width</label>
+              <select
+                value={(localSettings.receiptTemplate || {}).thermalWidth || '58mm'}
+                onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), thermalWidth: e.target.value })}
+                className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+              >
+                <option value="58mm">58mm (Standard thermal)</option>
+                <option value="80mm">80mm (Wide thermal)</option>
+                <option value="A4">A4 (Full page)</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-3 pt-6">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(localSettings.receiptTemplate || {}).showTaxBreakdown !== false}
+                  onChange={e => handleSettingChange('receiptTemplate', { ...(localSettings.receiptTemplate || {}), showTaxBreakdown: e.target.checked })}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-checked:bg-blue-600 rounded-full peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all relative"></div>
+              </label>
+              <span className="text-sm text-gray-700 dark:text-gray-300">Show tax breakdown on receipt</span>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end pt-6 border-t border-gray-200 dark:border-gray-700">

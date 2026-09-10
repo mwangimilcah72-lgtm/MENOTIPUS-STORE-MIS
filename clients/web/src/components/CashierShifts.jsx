@@ -1,18 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
-  Search, Plus, Filter, Edit2, Trash2, Download, Upload, Eye, Calendar,
-  AlertTriangle, Package, FileText, ChevronLeft, ChevronRight, MoreVertical,
-  Settings, Database, BarChart3, Users, Building, Tag, Archive, DollarSign,
-  Truck, CreditCard, MapPin, User, Clock, Receipt, TrendingUp, TrendingDown
+  Search, Plus, Edit2, Trash2, Download, Upload, Eye, Calendar,
+  Database, User, Clock, TrendingUp, TrendingDown, Package, ChevronLeft, ChevronRight, ImageIcon, X,
+  Printer, Award, BarChart3, DollarSign
 } from 'lucide-react';
 
+const getCashierAvatar = (cashierId, cashierName) => {
+  const isFemale = cashierName?.toLowerCase().includes('jane') ||
+    cashierName?.toLowerCase().includes('mary') ||
+    cashierName?.toLowerCase().includes('ann') ||
+    cashierName?.toLowerCase().includes('lisa');
+  const gender = isFemale ? 'women' : 'men';
+  const num = ((cashierId || 1) % 70) + 1;
+  return `https://randomuser.me/api/portraits/${gender}/${num}.jpg`;
+};
+
+const CashierAvatar = ({ shift, size = 'sm' }) => {
+  const [err, setErr] = useState(false);
+  const dim = size === 'lg' ? 'h-16 w-16' : 'h-9 w-9';
+  const text = size === 'lg' ? 'text-2xl' : 'text-sm';
+  const src = shift.avatar || getCashierAvatar(shift.cashierId, shift.cashierName);
+  if (!err) {
+    return (
+      <img
+        src={src}
+        alt={shift.cashierName}
+        className={`${dim} rounded-full object-cover border-2 border-blue-200 dark:border-blue-700 flex-shrink-0`}
+        onError={() => setErr(true)}
+      />
+    );
+  }
+  return (
+    <div className={`${dim} rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center flex-shrink-0`}>
+      <span className={`${text} font-bold text-white`}>{(shift.cashierName || 'C').charAt(0)}</span>
+    </div>
+  );
+};
+
 const CashierShifts = () => {
+  const avatarInputRef = useRef(null);
+
   // State management
   const [shifts, setShifts] = useState([
     {
       id: 1,
       cashierId: 1,
       cashierName: 'John Cashier',
+      avatar: getCashierAvatar(1, 'John Cashier'),
       date: '2024-12-21',
       shiftStart: '09:00',
       shiftEnd: '17:00',
@@ -37,6 +71,7 @@ const CashierShifts = () => {
       id: 2,
       cashierId: 2,
       cashierName: 'Jane Cashier',
+      avatar: getCashierAvatar(2, 'Jane Cashier'),
       date: '2024-12-21',
       shiftStart: '13:00',
       shiftEnd: '21:00',
@@ -72,6 +107,7 @@ const CashierShifts = () => {
   const [shiftForm, setShiftForm] = useState({
     cashierId: '',
     cashierName: '',
+    avatar: '',
     date: new Date().toISOString().split('T')[0],
     shiftStart: '09:00',
     shiftEnd: '17:00',
@@ -82,6 +118,14 @@ const CashierShifts = () => {
     transactions: [],
     status: 'open'
   });
+
+  const handleAvatarFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => setShiftForm(prev => ({ ...prev, avatar: evt.target.result }));
+    reader.readAsDataURL(file);
+  };
 
   // Filter shifts based on search criteria
   const filteredShifts = shifts.filter(shift => {
@@ -109,11 +153,27 @@ const CashierShifts = () => {
   const currentItems = sortedShifts.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedShifts.length / itemsPerPage);
 
+  const resetShiftForm = () => ({
+    cashierId: '',
+    cashierName: '',
+    avatar: '',
+    date: new Date().toISOString().split('T')[0],
+    shiftStart: '09:00',
+    shiftEnd: '17:00',
+    openingCash: '',
+    closingCash: '',
+    salesAmount: 0,
+    expenses: [],
+    transactions: [],
+    status: 'open'
+  });
+
   const handleAddShift = (e) => {
     e.preventDefault();
     const newShift = {
       ...shiftForm,
       id: Math.max(...shifts.map(s => s.id), 0) + 1,
+      avatar: shiftForm.avatar || getCashierAvatar(parseInt(shiftForm.cashierId) || shifts.length + 1, shiftForm.cashierName),
       expectedCash: parseFloat(shiftForm.openingCash) || 0,
       salesAmount: 0,
       expenses: [],
@@ -121,22 +181,9 @@ const CashierShifts = () => {
       status: 'open',
       createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
     };
-    
     setShifts([...shifts, newShift]);
     setShowAddShiftModal(false);
-    setShiftForm({
-      cashierId: '',
-      cashierName: '',
-      date: new Date().toISOString().split('T')[0],
-      shiftStart: '09:00',
-      shiftEnd: '17:00',
-      openingCash: '',
-      closingCash: '',
-      salesAmount: 0,
-      expenses: [],
-      transactions: [],
-      status: 'open'
-    });
+    setShiftForm(resetShiftForm());
   };
 
   const handleEditShift = (shift) => {
@@ -156,13 +203,70 @@ const CashierShifts = () => {
   };
 
   const exportToExcel = () => {
-    // Export functionality would go here
     alert('Export to Excel functionality would be implemented here');
   };
 
   const exportToCSV = () => {
-    // Export functionality would go here
-    alert('Export to CSV functionality would be implemented here');
+    const rows = shifts.map(s => ({
+      ID: s.id, Cashier: s.cashierName, Date: s.date, Start: s.shiftStart, End: s.shiftEnd,
+      Opening: s.openingCash, Closing: s.closingCash, Sales: s.salesAmount,
+      Expenses: s.expenses.reduce((sum, e) => sum + e.amount, 0), Status: s.status
+    }));
+    const headers = Object.keys(rows[0]);
+    const csv = [headers.join(','), ...rows.map(r => headers.map(h => r[h]).join(','))].join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = 'cashier-shifts.csv';
+    a.click();
+  };
+
+  const getShiftScore = (shift) => {
+    const { salesTotal, expensesTotal } = calculateShiftTotals(shift);
+    const txCount = shift.transactions?.filter(t => t.type === 'sale').length || 0;
+    const avgTx = txCount > 0 ? salesTotal / txCount : 0;
+    const cashVar = Math.abs((shift.closingCash || 0) - ((shift.openingCash || 0) + salesTotal - expensesTotal));
+    let score = 100;
+    if (cashVar > 50) score -= 30;
+    else if (cashVar > 20) score -= 15;
+    else if (cashVar > 5) score -= 5;
+    if (txCount < 5) score -= 10;
+    return { score: Math.max(0, score), txCount, avgTx, salesTotal, cashVar };
+  };
+
+  const printReconciliation = (shift) => {
+    const { salesTotal, expensesTotal, expectedCash } = calculateShiftTotals(shift);
+    const variance = (shift.closingCash || 0) - expectedCash;
+    const html = `
+      <html><head><title>Shift Reconciliation #${shift.id}</title>
+      <style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#222}
+      h1{font-size:20px;border-bottom:2px solid #333;padding-bottom:8px}
+      table{width:100%;border-collapse:collapse;margin:16px 0}
+      td,th{padding:8px 12px;border:1px solid #ddd;font-size:14px}
+      th{background:#f5f5f5;font-weight:bold;text-align:left}
+      .total{font-weight:bold;font-size:16px}.variance{color:${variance < 0 ? 'red' : 'green'}}
+      .sig{margin-top:60px;border-top:1px solid #333;padding-top:8px;font-size:12px}
+      @media print{body{margin:0}}</style></head>
+      <body>
+        <h1>Daily Cash Reconciliation Report</h1>
+        <p><strong>Cashier:</strong> ${shift.cashierName} &nbsp;|&nbsp; <strong>Date:</strong> ${shift.date}</p>
+        <p><strong>Shift:</strong> ${shift.shiftStart} – ${shift.shiftEnd || 'Active'} &nbsp;|&nbsp; <strong>Status:</strong> ${shift.status}</p>
+        <table>
+          <tr><th>Item</th><th>Amount</th></tr>
+          <tr><td>Opening Cash</td><td>${formatCurrency(shift.openingCash)}</td></tr>
+          <tr><td>Total Sales</td><td>${formatCurrency(salesTotal)}</td></tr>
+          <tr><td>Total Expenses</td><td>(${formatCurrency(expensesTotal)})</td></tr>
+          <tr><td>Expected Closing Cash</td><td>${formatCurrency(expectedCash)}</td></tr>
+          <tr><td>Actual Closing Cash</td><td>${formatCurrency(shift.closingCash)}</td></tr>
+          <tr class="total"><td>Cash Variance</td><td class="variance">${variance >= 0 ? '+' : ''}${formatCurrency(variance)}</td></tr>
+        </table>
+        <p><strong>Transaction Count:</strong> ${shift.transactions?.filter(t => t.type === 'sale').length || 0}</p>
+        <p><strong>Report Generated:</strong> ${new Date().toLocaleString()}</p>
+        <div class="sig">Cashier Signature: _______________________ &nbsp;&nbsp; Manager Signature: _______________________</div>
+      </body></html>`;
+    const w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+    w.print();
   };
 
   const formatCurrency = (amount) => {
@@ -295,6 +399,58 @@ const CashierShifts = () => {
         </div>
       </div>
 
+      {/* Shift Scorecards */}
+      {shifts.filter(s => s.status === 'closed').length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Award className="h-5 w-5 text-yellow-500" /> Shift Performance Scorecards
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {shifts.filter(s => s.status === 'closed').slice(0, 4).map(shift => {
+              const { score, txCount, avgTx, salesTotal, cashVar } = getShiftScore(shift);
+              const grade = score >= 90 ? { label: 'Excellent', color: 'text-green-600' } : score >= 75 ? { label: 'Good', color: 'text-blue-600' } : score >= 60 ? { label: 'Fair', color: 'text-yellow-600' } : { label: 'Needs Review', color: 'text-red-600' };
+              return (
+                <div key={shift.id} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <CashierAvatar shift={shift} size="sm" />
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm">{shift.cashierName}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{shift.date} · {shift.shiftStart}–{shift.shiftEnd}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-2xl font-bold ${grade.color}`}>{score}</p>
+                      <p className={`text-xs font-medium ${grade.color}`}>{grade.label}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
+                      <p className="text-gray-500 dark:text-gray-400">Sales</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{formatCurrency(salesTotal)}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
+                      <p className="text-gray-500 dark:text-gray-400">Transactions</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{txCount}</p>
+                    </div>
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2">
+                      <p className="text-gray-500 dark:text-gray-400">Cash Variance</p>
+                      <p className={`font-bold ${cashVar > 20 ? 'text-red-600' : 'text-green-600'}`}>{formatCurrency(cashVar)}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => printReconciliation(shift)}
+                    className="mt-3 w-full py-1.5 text-xs text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center justify-center gap-1.5"
+                  >
+                    <Printer className="h-3.5 w-3.5" /> Print Reconciliation Report
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Search and Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -377,8 +533,14 @@ const CashierShifts = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       {shift.date}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {shift.cashierName}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <CashierAvatar shift={shift} size="sm" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{shift.cashierName}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">ID #{shift.cashierId}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {shift.shiftStart} - {shift.shiftEnd || 'Active'}
@@ -406,19 +568,26 @@ const CashierShifts = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
-                        <button 
+                        <button
                           onClick={() => handleViewShift(shift)}
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleEditShift(shift)}
                           className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
                         >
                           <Edit2 className="h-4 w-4" />
                         </button>
-                        <button 
+                        <button
+                          onClick={() => printReconciliation(shift)}
+                          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                          title="Print reconciliation"
+                        >
+                          <Printer className="h-4 w-4" />
+                        </button>
+                        <button
                           onClick={() => handleDeleteShift(shift)}
                           className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                         >
@@ -525,20 +694,43 @@ const CashierShifts = () => {
           <div className="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white dark:bg-gray-800">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Shift</h3>
             <form onSubmit={handleAddShift} className="space-y-4">
+              <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="relative">
+                  {shiftForm.avatar ? (
+                    <div className="relative">
+                      <img src={shiftForm.avatar} alt="Cashier" className="h-14 w-14 rounded-full object-cover border-2 border-blue-300" onError={(e) => e.target.style.display='none'} />
+                      <button type="button" onClick={() => setShiftForm({...shiftForm, avatar: ''})} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="h-14 w-14 rounded-full bg-gray-200 dark:bg-gray-600 border-2 border-dashed border-gray-300 dark:border-gray-500 flex items-center justify-center">
+                      <User className="h-6 w-6 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cashier Photo</p>
+                  <div className="flex gap-2">
+                    <input type="file" accept="image/*" ref={avatarInputRef} onChange={handleAvatarFile} className="hidden" />
+                    <button type="button" onClick={() => avatarInputRef.current?.click()} className="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-600 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                      <ImageIcon className="h-3 w-3 mr-1" /> Upload photo
+                    </button>
+                    <input type="text" placeholder="or paste image URL" className="flex-1 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-600 dark:text-white" value={shiftForm.avatar} onChange={(e) => setShiftForm({...shiftForm, avatar: e.target.value})} />
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cashier</label>
-                  <select
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cashier Name</label>
+                  <input
+                    type="text"
                     required
+                    placeholder="Enter cashier name"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    value={shiftForm.cashierId}
-                    onChange={(e) => setShiftForm({ ...shiftForm, cashierId: e.target.value })}
-                  >
-                    <option value="">Select Cashier</option>
-                    {getUniqueCashiers().map(cashier => (
-                      <option key={cashier.id} value={cashier.id}>{cashier.name}</option>
-                    ))}
-                  </select>
+                    value={shiftForm.cashierName}
+                    onChange={(e) => setShiftForm({ ...shiftForm, cashierName: e.target.value, cashierId: shiftForm.cashierId || (shifts.length + 1) })}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
@@ -595,22 +787,7 @@ const CashierShifts = () => {
               <div className="flex justify-end space-x-3 pt-6">
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowAddShiftModal(false);
-                    setShiftForm({
-                      cashierId: '',
-                      cashierName: '',
-                      date: new Date().toISOString().split('T')[0],
-                      shiftStart: '09:00',
-                      shiftEnd: '17:00',
-                      openingCash: '',
-                      closingCash: '',
-                      salesAmount: 0,
-                      expenses: [],
-                      transactions: [],
-                      status: 'open'
-                    });
-                  }}
+                  onClick={() => { setShowAddShiftModal(false); setShiftForm(resetShiftForm()); }}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
                 >
                   Cancel
@@ -641,6 +818,23 @@ const CashierShifts = () => {
               </button>
             </div>
             
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+              <CashierAvatar shift={shiftForm} size="lg" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{shiftForm.cashierName}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Cashier ID #{shiftForm.cashierId}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    shiftForm.status === 'open'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                  }`}>
+                    {shiftForm.status?.charAt(0).toUpperCase() + shiftForm.status?.slice(1)}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{shiftForm.date} · {shiftForm.shiftStart} – {shiftForm.shiftEnd || 'Active'}</span>
+                </div>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white mb-4">Shift Information</h4>

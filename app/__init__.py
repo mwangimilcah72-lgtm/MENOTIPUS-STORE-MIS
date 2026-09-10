@@ -104,17 +104,10 @@ def create_app(config_object=None):
     # Setup logging
     setup_logging(app)
     
-    # Register blueprints with API versioning
-    # Skip for testing to avoid blueprint registration issues
-    if not app.config.get('TESTING'):
-        from app.blueprints import api_bp
-        api_version = os.getenv('API_VERSION', 'v1')
-        app.register_blueprint(api_bp, url_prefix=f'/api/{api_version}')
-        # Also register without version for backward compatibility
-        app.register_blueprint(api_bp, url_prefix='/api')
-    else:
-        from app.blueprints import api_bp
-        app.register_blueprint(api_bp, url_prefix='/api')
+    # Register blueprints
+    api_version = os.getenv('API_VERSION', 'v1')
+    from app.blueprints import api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
     
     # Health check endpoint
     @app.route('/health')

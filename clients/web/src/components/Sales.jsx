@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   Search, ShoppingCart, Plus, Minus, Trash2, CreditCard, Smartphone, Banknote, Printer, Check, X, AlertTriangle, Tag, Percent, Barcode, Package, Filter, Grid, List, Pause, User
 } from 'lucide-react';
+import ReceiptModal from './ReceiptModal';
 import { useInventory } from '../contexts/InventoryContext';
 import { useSales } from '../contexts/SalesContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -93,55 +94,6 @@ const Sales = () => {
     alert('Order held successfully!');
   };
 
-  const handlePrintReceipt = () => {
-    const printContent = document.getElementById('receipt');
-    if (printContent) {
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>TechMart Store - Sales Receipt</title>
-            <style>
-              @page { size: 80mm 297mm; margin: 0; }
-              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; width: 300px; margin: 0 auto; background: white; color: #333; }
-              .receipt-container { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-              .header { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px double #3b82f6; }
-              .store-name { font-size: 24px; font-weight: 700; color: #1f2937; margin: 0 0 5px 0; letter-spacing: 0.5px; }
-              .receipt-title { font-size: 14px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
-              .receipt-number { background: #3b82f6; color: white; display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; margin: 10px 0; font-family: 'Courier New', Courier, monospace; }
-              .datetime { font-size: 12px; color: #6b7280; margin: 5px 0; }
-              .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-              .items-table th { text-align: left; padding: 8px 0; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 2px solid #e5e7eb; }
-              .items-table td { padding: 8px 0; font-size: 13px; }
-              .item-name { font-weight: 500; }
-              .item-quantity { color: #6b7280; font-size: 12px; }
-              .summary { margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 8px; }
-              .summary-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
-              .summary-label { color: #4b5563; }
-              .summary-total { font-size: 16px; font-weight: 700; padding-top: 10px; margin-top: 10px; border-top: 2px solid #e5e7eb; color: #1f2937; }
-              .payment-method { background: #dbeafe; padding: 10px; border-radius: 6px; margin: 15px 0; text-align: center; font-weight: 600; color: #1d4ed8; }
-              .footer { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px dashed #d1d5db; font-size: 12px; color: #6b7280; }
-              .cashier { font-weight: 600; color: #1f2937; }
-              .thank-you { font-size: 14px; font-weight: 600; color: #059669; margin: 15px 0; }
-              .barcode { text-align: center; margin: 20px 0; padding: 10px; background: #f3f4f6; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 14px; letter-spacing: 2px; }
-              @media print { body { padding: 15px; width: auto; box-shadow: none; } .receipt-container { border: none; box-shadow: none; padding: 15px; } .no-print { display: none; } }
-            </style>
-          </head>
-          <body>
-            <div class="receipt-container">
-              ${printContent.innerHTML}
-            </div>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.onload = function() {
-        printWindow.focus();
-        printWindow.print();
-      };
-    }
-  };
 
   const handleBarcodeScan = (e) => {
     if (e.key === 'Enter') {
@@ -766,108 +718,11 @@ const Sales = () => {
         </div>
       )}
 
-      {showReceipt && lastSale && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-screen overflow-y-auto">
-            <div className="absolute top-4 right-4">
-              <button
-                onClick={() => setShowReceipt(false)}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors"
-                aria-label="Close receipt"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="text-center pt-8 pb-4">
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
-                <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Sale Completed!</h3>
-              <p className="text-green-600 dark:text-green-400 font-medium">Thank you for your purchase</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-700 mx-6 p-6 rounded-xl text-sm" id="receipt">
-              <div className="text-center mb-6">
-                <h4 className="text-xl font-bold text-gray-800 dark:text-white mb-1">TechMart Store</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">Sales Receipt</p>
-                <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg inline-block mb-3">
-                  <p className="text-sm font-mono font-bold text-gray-800 dark:text-white">#{String(lastSale.id).padStart(8, '0')}</p>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  {new Date(lastSale.date + ' ' + lastSale.time).toLocaleString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
-                <table className="items-table w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-left">Item</th>
-                      <th className="text-right">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {lastSale.items.map((item, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="item-name">{item.name}</div>
-                          <div className="item-quantity">Qty: {item.quantity}</div>
-                        </td>
-                        <td className="text-right font-medium">{formatPrice(item.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 summary">
-                <div className="summary-item">
-                  <span className="summary-label">Subtotal:</span>
-                  <span>{formatPrice(lastSale.subtotal)}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Tax ({settings.taxRate || 10}%):</span>
-                  <span>{formatPrice(lastSale.tax)}</span>
-                </div>
-                <div className="summary-item summary-total">
-                  <span>Total:</span>
-                  <span>{formatPrice(lastSale.total)}</span>
-                </div>
-                <div className={`payment-method ${lastSale.status === 'credit' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' : ''}`}>
-                  Payment: {lastSale.paymentMethod.replace('_', ' ')} {lastSale.status === 'credit' ? ' (CREDIT)' : ''}
-                </div>
-              </div>
-              <div className="text-center text-xs text-gray-600 dark:text-gray-400 mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <p className="thank-you">{settings.receiptFooter}</p>
-                <p>Served by: <span className="cashier">{lastSale.cashierName}</span></p>
-                <p className="mt-2 text-gray-500 dark:text-gray-500">Save this receipt for your records</p>
-                <div className="barcode mt-4">
-                  {String(lastSale.id).padStart(12, '0')}
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-3 p-6">
-              <button
-                onClick={handlePrintReceipt}
-                className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center transition-colors"
-              >
-                <Printer className="h-5 w-5 mr-2" />
-                Print Receipt
-              </button>
-              <button
-                onClick={() => setShowReceipt(false)}
-                className="flex-1 px-4 py-3 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 rounded-xl transition-colors"
-              >
-                New Sale
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ReceiptModal
+        isOpen={showReceipt && !!lastSale}
+        onClose={() => setShowReceipt(false)}
+        sale={lastSale}
+      />
     </div>
   );
 };

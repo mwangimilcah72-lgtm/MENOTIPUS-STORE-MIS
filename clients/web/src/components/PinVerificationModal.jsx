@@ -66,8 +66,8 @@ const PinVerificationModal = ({ isOpen, onClose, onVerify, title = "Enter Your P
                   name="pin"
                   type={showPin ? "text" : "password"}
                   value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  maxLength={4}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  maxLength={6}
                   autoFocus
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   placeholder="••••"
@@ -100,7 +100,7 @@ const PinVerificationModal = ({ isOpen, onClose, onVerify, title = "Enter Your P
               </button>
               <button
                 type="submit"
-                disabled={isLoading || pin.length !== 4}
+                disabled={isLoading || pin.length < 4}
                 className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Verifying...' : 'Verify'}

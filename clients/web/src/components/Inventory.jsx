@@ -1,7 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, Plus, Filter, Edit2, Trash2, AlertTriangle, Package, Eye, Barcode, Calendar, Loader, AlertCircle, Upload, Scale, RotateCcw, FileText
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Search, Plus, Filter, Edit2, Trash2, AlertTriangle, Package, Eye, Barcode, Calendar, Loader, AlertCircle, Upload, Scale, RotateCcw, FileText, ImageIcon, X
 } from 'lucide-react';
+
+const CATEGORY_COLORS = {
+  Kitchen: 'from-orange-400 to-red-500',
+  Electronics: 'from-blue-400 to-indigo-600',
+  Clothing: 'from-purple-400 to-pink-500',
+  Food: 'from-green-400 to-teal-500',
+  Beverages: 'from-yellow-400 to-orange-500',
+  Health: 'from-teal-400 to-cyan-500',
+  Sports: 'from-lime-400 to-green-600',
+  Office: 'from-slate-400 to-gray-600',
+  Toys: 'from-pink-400 to-rose-500',
+  Books: 'from-amber-400 to-yellow-600',
+};
+
+const getAvatarGradient = (category, name) =>
+  CATEGORY_COLORS[category] || `from-blue-${(name.charCodeAt(0) % 4) * 100 + 400} to-indigo-${(name.charCodeAt(0) % 3) * 100 + 500}` || 'from-blue-400 to-indigo-600';
+
+const getAutoImageUrl = (product) => {
+  const kw = `${product.name}+${product.category}`.toLowerCase().replace(/\s+/g, '+');
+  return `https://source.unsplash.com/featured/200x200/?${kw}`;
+};
+
+const ProductThumbnail = ({ product, size = 'sm' }) => {
+  const [primaryError, setPrimaryError] = useState(false);
+  const [autoError, setAutoError] = useState(false);
+  const dim = size === 'lg' ? 'h-32 w-32' : 'h-10 w-10';
+  const textSize = size === 'lg' ? 'text-4xl' : 'text-sm';
+  const cls = `${dim} rounded-lg object-cover flex-shrink-0 border border-gray-200 dark:border-gray-600`;
+
+  if (product.image && !primaryError) {
+    return <img src={product.image} alt={product.name} className={cls} onError={() => setPrimaryError(true)} />;
+  }
+  if (!autoError) {
+    return <img src={getAutoImageUrl(product)} alt={product.name} className={cls} onError={() => setAutoError(true)} />;
+  }
+  const gradient = getAvatarGradient(product.category, product.name);
+  return (
+    <div className={`${dim} rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
+      <span className={`${textSize} font-bold text-white`}>{product.name.charAt(0).toUpperCase()}</span>
+    </div>
+  );
+};
 import { useInventory } from '../contexts/InventoryContext';
 import { useAppSettings } from '../contexts/AppSettingsContext';
 import * as XLSX from 'xlsx';
@@ -48,11 +90,13 @@ const Inventory = () => {
     minStock: '',
     supplierId: '',
     description: '',
+    image: '',
     dateAdded: new Date().toISOString().split('T')[0],
     baseUnit: 'piece',
     sellUnits: ['piece'],
     conversionFactors: { piece: 1 }
   });
+  const imageInputRef = useRef(null);
   const [deletingProductId, setDeletingProductId] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
   const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
@@ -105,11 +149,38 @@ const Inventory = () => {
       minStock: '',
       supplierId: '',
       description: '',
+      image: '',
       dateAdded: new Date().toISOString().split('T')[0],
+      expiryDate: '',
       baseUnit: 'piece',
       sellUnits: ['piece'],
       conversionFactors: { piece: 1 }
     });
+  };
+
+  const getExpiryStatus = (product) => {
+    if (!product.expiryDate) return null;
+    const today = new Date();
+    const expiry = new Date(product.expiryDate);
+    const daysLeft = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    if (daysLeft < 0) return { label: 'Expired', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' };
+    if (daysLeft <= 30) return { label: `Exp. ${daysLeft}d`, color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' };
+    return { label: `Exp. ${product.expiryDate}`, color: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' };
+  };
+
+  const reorderSuggestions = products.filter(p => p.stock <= p.minStock && p.stock >= 0)
+    .map(p => {
+      const avgDailySales = 2;
+      const suggested = Math.max(p.minStock * 2, avgDailySales * 14);
+      return { ...p, suggestedQty: Math.round(suggested) };
+    });
+
+  const handleImageFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => setFormData(prev => ({ ...prev, image: evt.target.result }));
+    reader.readAsDataURL(file);
   };
 
   const handleAdd = () => {
@@ -295,7 +366,9 @@ const Inventory = () => {
       minStock: product.minStock,
       supplierId: product.supplierId,
       description: product.description || '',
+      image: product.image || '',
       dateAdded: product.dateAdded ? product.dateAdded.split('T')[0] : new Date().toISOString().split('T')[0],
+      expiryDate: product.expiryDate || '',
       baseUnit: product.baseUnit || 'piece',
       sellUnits: product.sellUnits || ['piece'],
       conversionFactors: product.conversionFactors || { piece: 1 }
@@ -483,6 +556,61 @@ const Inventory = () => {
         </div>
       )}
 
+      {/* Expiry Alert Panel */}
+      {products.some(p => p.expiryDate && (() => {
+        const d = Math.ceil((new Date(p.expiryDate) - new Date()) / 86400000);
+        return d < 30;
+      })()) && (
+        <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-5 w-5 text-orange-600" />
+            <p className="font-semibold text-orange-800 dark:text-orange-200">Expiring Soon</p>
+          </div>
+          <div className="space-y-1">
+            {products.filter(p => {
+              if (!p.expiryDate) return false;
+              return Math.ceil((new Date(p.expiryDate) - new Date()) / 86400000) < 30;
+            }).map(p => {
+              const d = Math.ceil((new Date(p.expiryDate) - new Date()) / 86400000);
+              return (
+                <p key={p.id} className="text-sm text-orange-700 dark:text-orange-300">
+                  <strong>{p.name}</strong> — {d < 0 ? 'EXPIRED' : `expires in ${d} days`} ({p.expiryDate}) · Stock: {p.stock}
+                </p>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Reorder Suggestions Panel */}
+      {reorderSuggestions.length > 0 && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="h-5 w-5 text-blue-600" />
+            <p className="font-semibold text-blue-800 dark:text-blue-200">AI Reorder Suggestions ({reorderSuggestions.length} products)</p>
+          </div>
+          <div className="space-y-2">
+            {reorderSuggestions.slice(0, 5).map(p => (
+              <div key={p.id} className="flex items-center justify-between text-sm">
+                <div>
+                  <span className="font-medium text-blue-800 dark:text-blue-300">{p.name}</span>
+                  <span className="text-blue-600 dark:text-blue-400 ml-2">Stock: {p.stock} / Min: {p.minStock}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-700 dark:text-blue-300">Suggest order: <strong>{p.suggestedQty} units</strong></span>
+                  <button
+                    onClick={() => alert(`Draft PO created for ${p.name}: ${p.suggestedQty} units\n(Connect to Suppliers page to send)`)}
+                    className="px-2 py-0.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                  >
+                    Draft PO
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
@@ -537,12 +665,15 @@ const Inventory = () => {
                 return (
                   <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {product.name}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {getSupplierName(product.supplierId)}
+                      <div className="flex items-center gap-3">
+                        <ProductThumbnail product={product} size="sm" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {product.name}
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {getSupplierName(product.supplierId)}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -577,9 +708,12 @@ const Inventory = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
-                        {status.label}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
+                          {status.label}
+                        </span>
+                        {(() => { const es = getExpiryStatus(product); return es ? <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${es.color}`}>{es.label}</span> : null; })()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
@@ -733,6 +867,17 @@ const Inventory = () => {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Expiry Date <span className="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <input
+                    type="date"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    value={formData.expiryDate}
+                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Base Unit</label>
                   <select
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
@@ -756,6 +901,62 @@ const Inventory = () => {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Image</label>
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0">
+                    {formData.image ? (
+                      <div className="relative">
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="h-20 w-20 rounded-lg object-cover border border-gray-200 dark:border-gray-600"
+                          onError={(e) => { e.target.style.display='none'; }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, image: '' })}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="h-20 w-20 rounded-lg bg-gray-100 dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
+                        <ImageIcon className="h-8 w-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Paste image URL..."
+                      className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm"
+                      value={formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">or</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={imageInputRef}
+                        onChange={handleImageFile}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => imageInputRef.current?.click()}
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-600 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      >
+                        <Upload className="h-3 w-3 mr-1" /> Upload from device
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
@@ -1101,6 +1302,19 @@ const Inventory = () => {
               >
                 ×
               </button>
+            </div>
+            <div className="flex items-center gap-5 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+              <ProductThumbnail product={selectedProduct} size="lg" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selectedProduct.name}</h2>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 mt-1">
+                  {selectedProduct.category}
+                </span>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">SKU: {selectedProduct.sku}</p>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${getStockStatus(selectedProduct).color}`}>
+                  {getStockStatus(selectedProduct).label}
+                </span>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
